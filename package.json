@@ -8,8 +8,24 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@vueuse/sound": "^1.1.7",
+    "apexcharts": "^3.32.1",
+    "axios": "^0.25.0",
+    "bootstrap": "^5.1.3",
+    "bootstrap-vue": "^2.21.2",
+    "chart.js": "^3.7.0",
     "core-js": "^3.6.5",
-    "vue": "^2.6.11"
+    "firebase": "^9.6.4",
+    "k-progress": "^1.5.0",
+    "sweetalert2": "^11.3.6",
+    "vue": "^2.6.14",
+    "vue-apexcharts": "^1.6.2",
+    "vue-axios": "^3.4.0",
+    "vue-chartjs": "^3.5.1",
+    "vue-router": "^3.5.3",
+    "vue-simple-alert": "^1.1.1",
+    "vue-ultimate-skeleton-cards": "^1.0.3",
+    "vue-wait": "^1.5.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
