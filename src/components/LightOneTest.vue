@@ -1,15 +1,18 @@
 <template>
 <div class="header">
     <div class="sidebar">
-      <div class="insidebar" style="margin: 60px">
+      <div class="insidebar" style="margin: 50px">
         <tr>
         <h2 style="color: white">Welcome</h2>
         </tr>
         <tr>
-        <router-link style="text-decoration: none; color: inherit;" to="/Home" replace>Select Mode</router-link>
+        <router-link style="text-decoration: none; color: inherit; font-weight: normal;" to="/Home" replace>Select Mode</router-link>
         </tr>
         <tr>
-        <router-link style="text-decoration: none; color: inherit;" to="/Dashboard" replace>Dashboard</router-link>
+        <router-link style="text-decoration: none; color: inherit; font-weight: normal;" to="/UserPracticeHistory">Practice Certificate</router-link>
+        </tr>
+        <tr>
+        <router-link style="text-decoration: none; color: inherit; font-weight: normal;" to="/UserTestHistory">Test Certificate</router-link>
         </tr>
       </div>
     </div>
@@ -128,7 +131,7 @@ import VueApexCharts from "vue-apexcharts";
 import axios from 'axios';
 
 import {firestoredb} from '../config';
-import {collection, getDocs, doc, setDoc, serverTimestamp } from "firebase/firestore"; 
+import {collection, getDocs, doc, setDoc, serverTimestamp, onSnapshot } from "firebase/firestore"; 
 import 'firebase/compat/database'
 // import {ref, onValue } from "firebase/database";
 import Swal from 'sweetalert2'
@@ -164,6 +167,10 @@ export default {
 //   },
   data() {
     return {
+        DeviceAPI: null,
+        Device: null,
+        NumI: 0,
+        PushStatus: false,
         StudentID: null,
         size: 0,
         displayNameUser: null,
@@ -281,60 +288,101 @@ export default {
           this.emailUser = user.email;
           this.StudentID = (user.email).split("@")[0];
           this.photoURLUser = user.photoURL;
+          this.getDevice(this.StudentID);
+          this.DocIDSize(user)
         }
         });
 
-      this.DocIDSize()
+      // this.DocIDSize()
       
       // this.getNewSeries();
       this.alertStart();
       // this.getDataMag();
-    window.setInterval(() => {
+      window.setInterval(() => {
+        this.getDataMag();
       // this.getNewSeries();
-      this.getDataMag();
+      // this.getDataMag();
 
       this.$refs.chart.updateSeries([{
           data: data,
-        }]);
+      }]);
         
-    }, 1000);
-    // this.FinishPushForce();
+      }, 1000);
+    
   },
   updated(){
-       this.FinishPushForce();
+      // console.log(this.PushStatus);
+      // if(this.PushStatus==true){
+      //         if(this.ForcePush==0&&this.NumI==0){
+      //             Swal.fire({
+      //                 title: "บันทึก!!",
+      //                 text: "ระบบบันทึกการกดของคุณแล้ว!!",
+      //                 // type: "success",
+      //                 // timer: 5000
+      //                 }).then(r => {
+      //                 console.log(r.value);
+      //                 this.fillData()
+      //                 this.$router.push("/Home")
+      //             });
+      //             this.NumI+1;
+      //             this.PushStatus==false;
+      //         }
+      //       }
   },
   methods: {
-      DocIDSize(){
-        getDocs(collection(firestoredb, "History")).then(snap => {
+      // DocIDSize(){
+      //   getDocs(collection(firestoredb, "TestHistory")).then(snap => {
+      //     this.size = snap.size // will return the collection size
+      //     console.log("Size is " +this.size);
+      //     // this.size+1;
+      //   });
+      // },
+      DocIDSize(user){
+        getDocs(collection(firestoredb,"Students",user.email.split("@")[0], "TestHistory")).then(snap => {
           this.size = snap.size // will return the collection size
-          console.log(this.size);
+          console.log("Size is " +this.size);
           // this.size+1;
         });
       },
-      FinishPushForce(){
-          if (this.ChartData[this.ChartData.length-1].y==0&&this.ChartData[this.ChartData.length-2].y>0){
-            //   console.log(this.FinishPush);
-                Swal.fire({
-                    title: "บันทึก!!",
-                    text: "ระบบบันทึกการกดของคุณแล้ว!!",
-                    type: "success",
-                    // timer: 5000
-                    }).then(r => {
-                    console.log(r.value);
-                    this.fillData()
-                    this.$router.push("/Home")
-                });
-          }
+      getDevice(StudentID){
+        onSnapshot(doc(firestoredb, "Students", StudentID), (doc) => {
+                this.DeviceAPI = doc.data().DeviceAPI;
+                console.log(this.Device);
+              });
       },
+      // FinishPushForce(){
+      //     if(this.PushStatus==true){
+      //         if(this.ForcePush==0&&this.NumI==0){
+      //             Swal.fire({
+      //                 title: "บันทึก!!",
+      //                 text: "ระบบบันทึกการกดของคุณแล้ว!!",
+      //                 // type: "success",
+      //                 // timer: 5000
+      //                 }).then(r => {
+      //                 console.log(r.value);
+      //                 this.fillData()
+      //                 this.$router.push("/Home")
+      //             });
+      //             this.NumI+1;
+      //             this.PushStatus==false;
+      //         }
+      //       }
+      // },
       fillData () {
+        if(this.DeviceAPI=="https://magellan.ais.co.th/pullmessageapis/api/listen/thing/57F86C983041DCBEFD8838A2E1F5A106"){
+            this.Device = "Device No.01";
+          }
+        else if(this.DeviceAPI=="https://magellan.ais.co.th/pullmessageapis/api/listen/thing/B2FA25E81912FE3465EB0CFE69CE826E"){
+          this.Device = "Device No.02";
+        }
        try {
-          const docRef = setDoc(doc(firestoredb, "History", ((this.size)+1).toString()), {
-            ForcData: this.ForcData,
-            TimeSec: this.TimeSec,
+          const docRef = setDoc(doc(firestoredb,  "Students", this.StudentID.toString(),"TestHistory", ((this.size)+1).toString()), {
             ChartData: data,
             Name: this.displayNameUser,
             StudentID: this.StudentID,
-            Mode: "โหมดทดสอบการกดด้วยแรง 15-20 กิโลกรัม เป็นเวลา 10-15 วินาที",
+            Device: this.Device,
+            Mode: "คาบเบา",
+            ModeSec: "10-15",
             DateDone: serverTimestamp(),
           });
           console.log("Document written with ID: ", docRef.id);
@@ -352,14 +400,16 @@ export default {
         })
       },
       getDataMag(){
-        axios.get('https://magellan.ais.co.th/pullmessageapis/api/listen/thing/57F86C983041DCBEFD8838A2E1F5A106').then(response => {
-          setTimeout(() => {
+        axios.get(this.DeviceAPI).then(response => {
+          // setTimeout(() => {
           this.ForcePush = Math.floor(response.data.Sensor.force);
-            // if(this.ForcePush>0){
-            //   this.FinishPush=false;
-            //   console.log(this.FinishPush);
-            // }
-          },100);
+            if(this.ForcePush>0){
+              this.PushStatus=true;
+              console.log(this.PushStatus);
+            }
+            
+          // },100);
+          // this.FinishPushForce();
         });
         this.ForcData.push(this.ForcePush);
         // console.log(this.ForcData);
@@ -367,12 +417,12 @@ export default {
             x: this.timerCount,
             y: this.ForcePush,
         });
-        if(this.ForcData[this.ForcData.length-1]>=15 && this.ForcData[this.ForcData.length-1]<=20){
-            this.timerCountDone++;
-        }
-        else{
-            this.timerCountDone=0;
-        }
+        // if(this.ForcData[this.ForcData.length-1]>=15 && this.ForcData[this.ForcData.length-1]<=20){
+        //     this.timerCountDone++;
+        // }
+        // else{
+        //     this.timerCountDone=0;
+        // }
         },
 
   },
@@ -391,24 +441,47 @@ export default {
                 },
                 immediate: true // This ensures the watcher is triggered upon creation
             },
-            FinishPush:{
-                handler(value) {
-                          if (value == true) {
-                            Swal.fire({
-                                title: "บันทึก!!",
-                                text: "ระบบบันทึกการกดของคุณแล้ว!!",
-                                type: "success",
-                                // timer: 5000
-                                }).then(r => {
-                                console.log(r.value);
-                                this.fillData()
-                                this.$router.push("/Home")
-                            });
-                            //   this.win.play();
-                          }
-                  },
-                  immediate: true // This ensures the watcher is triggered upon creation
-            },
+            // PushStatus:{
+            //   handler(value) {
+            //         if (value == true) {
+            //           console.log("Working");
+            //           console.log(this.ForcData);
+            //             if(this.ForcData[this.ForcData.length-1]==0){
+            //               console.log(this.ForcData[this.ForcData.length-1]);
+            //               Swal.fire({
+            //                   title: "บันทึก!!",
+            //                   text: "ระบบบันทึกการกดของคุณแล้ว!!",
+            //                   // type: "success",
+            //                   // timer: 5000
+            //                   }).then(r => {
+            //                   console.log(r.value);
+            //                   this.fillData()
+            //                   // this.$router.push("/Home")
+            //               });
+            //               // this.PushStatus==false;
+            //           }                    
+            //         }
+            //   },
+            //   immediate: true
+            // },
+            ForcePush:{
+              handler(value) {
+                    if (value==0 && this.PushStatus==true) {
+                          Swal.fire({
+                              title: "บันทึก!!",
+                              text: "ระบบบันทึกการกดของคุณแล้ว!!",
+                              // type: "success",
+                              // timer: 5000
+                              }).then(r => {
+                              console.log(r.value);
+                              this.fillData()
+                              this.$router.push("/Home")
+                          });
+                          // this.PushStatus==false;
+                      }                    
+              },
+              immediate: true
+            }
 
     },
 };

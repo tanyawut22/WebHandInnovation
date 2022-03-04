@@ -1,15 +1,18 @@
 <template>
   <div>
     <div class="sidebar">
-      <div class="insidebar" style="margin: 60px">
+      <div class="insidebar" style="margin: 50px">
         <tr>
         <h2 style="color: white">Welcome</h2>
         </tr>
         <tr>
-        <router-link style="text-decoration: none; color: inherit;" to="/Home" replace>Select Mode</router-link>
+        <router-link style="text-decoration: none; color: inherit; font-weight: normal;" to="/Home" replace>Select Mode</router-link>
         </tr>
         <tr>
-        <router-link style="text-decoration: none; color: inherit;" to="/Dashboard">Dashboard</router-link>
+        <router-link style="text-decoration: none; color: inherit; font-weight: normal;" to="/UserPracticeHistory">Practice Certificate</router-link>
+        </tr>
+        <tr>
+        <router-link style="text-decoration: none; color: inherit; font-weight: normal;" to="/UserTestHistory">Test Certificate</router-link>
         </tr>
       </div>
     </div>
@@ -26,55 +29,32 @@
             <template #button-content>
               <img :src="photoURLUser" class="d-inline-block align-top" style="border-radius: 50%; width: 40px">
             </template>
-            <b-dropdown-item href="#">{{displayNameUser}}</b-dropdown-item>
-            <b-dropdown-item href="#">{{emailUser}}</b-dropdown-item>
+            <b-dropdown-group id="dropdown-group-1" header="ข้อมูลส่วนตัว">
+              <b-dropdown-item href="#">{{displayNameUser}}</b-dropdown-item>
+              <b-dropdown-item href="#">{{emailUser}}</b-dropdown-item>
+            </b-dropdown-group>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-group id="dropdown-group-1" header="อุปกรณ์">
+              <b-dropdown-item-button disabled>ท่านกำลังใช้งาน {{Device}}</b-dropdown-item-button>
+              <!-- <select v-model="selectedDeviceValue"> -->
+              <b-dropdown-item-button v-on:click="getDeviceOne">M-FiP No.01</b-dropdown-item-button>
+              <b-dropdown-item-button v-on:click="getDeviceTwo">M-FiP No.02</b-dropdown-item-button>
+              <!-- <option v-for="SelectDe in SelectDeviceArray" v-bind:key="SelectDe.Id" v-bind:value="SelectDe.Id">{{SelectDe.Name}}</option> -->
+              <!-- </select> -->
+              <!-- <b-dropdown-item-button v-on:click="signout">M-FiP No.01</b-dropdown-item-button>
+              <b-dropdown-item-button v-on:click="signout">M-FiP No.02</b-dropdown-item-button> -->
+            </b-dropdown-group>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-item-button v-on:click="signout">ออกจากระบบ</b-dropdown-item-button>
           </b-nav-item-dropdown>
+          <!-- <select v-model="selectedDeviceValue">
+            <option v-for="SelectDe in SelectDeviceArray" v-bind:key="SelectDe.Id" v-bind:value="SelectDe.Id">{{ SelectDe.Name }}</option>
+          </select> -->
         </b-navbar-nav>
       </b-navbar>
     </div>
   <div class="container">
       <h1 style="margin-bottom: 30px">โปรดเลือกโหมดที่ต้องการ</h1>
-      <!-- <tr>
-        <button type="button" class="btn btn-secondary btn-lg" style="margin-right: 50px"><router-link to="/ModeOne">10 - 15 sec</router-link></button>
-        <button type="button" class="btn btn-secondary btn-lg" style="margin-left: 50px"><router-link to="/ModeTwo">30 - 45 sec</router-link></button>
-      </tr> -->
-      <!-- <div class="cardA">
-        <SkeletonScaffold primary="teal" padding="10px" borderRadius="20px" animDisable>
-          <tr>
-            <td>
-              <div class="col-sm-4">
-                <img :src="imageBody" width="300" height="500"/>
-              </div>
-            </td>
-            <td>
-              <div class="col-sm-8">
-                <h3 style="color: white; text-align: center;">จุดสัญญาณในการนวด</h3>
-                <br/>
-                <tr>
-                  <td><h5>15 - 20 กิโลกรัม </h5><h5 style="color: #28A745">( เบา )</h5></td>
-                  <td><router-link style="text-decoration: none; color: inherit;" to="/FrontLightOne"><b-button class="button-21"> 10 - 15 วินาที </b-button></router-link></td>
-                  <td><router-link style="text-decoration: none; color: inherit;" to="/FrontLightTwo"><b-button class="button-21"> 30 - 45 วินาที</b-button></router-link></td>
-                  <td><router-link style="text-decoration: none; color: inherit;" to=""><b-button class="button-21"> 45 - 75 วินาที</b-button></router-link></td>
-                </tr>
-                <tr>
-                  <td><h5>20 - 25 กิโลกรัม </h5><h5 style="color: #FFC107">( กลาง )</h5></td>
-                  <td><router-link style="text-decoration: none; color: inherit;" to="/FrontMidiumOne"><b-button class="button-21"> 10 - 15 วินาที </b-button></router-link></td>
-                  <td><router-link style="text-decoration: none; color: inherit;" to="/FrontMidiumTwo"><b-button class="button-21"> 30 - 45 วินาที </b-button></router-link></td>
-                  <td><router-link style="text-decoration: none; color: inherit;" to=""><b-button class="button-21"> 45 - 75 วินาที</b-button></router-link></td>
-                </tr>
-                <tr>
-                  <td><h5>25 - 40 กิโลกรัม </h5><h5 style="color: #DC3545">( หนัก )</h5></td>
-                  <td><router-link style="text-decoration: none; color: inherit;" to="/FrontHeavyOne"><b-button class="button-21"> 10 - 15 วินาที </b-button></router-link></td>
-                  <td><router-link style="text-decoration: none; color: inherit;" to="/FrontHeavyTwo"><b-button class="button-21"> 30 - 45 วินาที </b-button></router-link></td>
-                  <td><router-link style="text-decoration: none; color: inherit;" to=""><b-button class="button-21"> 45 - 75 วินาที</b-button></router-link></td>
-                </tr>
-              </div>
-            </td>
-
-          </tr>
-
-        </SkeletonScaffold>
-      </div> -->
       <div class="row">
       <div class="col-md-4">
         <h4 style="margin-bottom: 10px; text-align: center;">กดตรงจุดที่แสดงไว้ดังนี้</h4>
@@ -82,38 +62,14 @@
       </div>
       <div class="col-md-8">
         <div style="margin-bottom: 30px" class="modeCard">
-        <!-- <h4 style="text-align: center; margin-bottom: 20px;">1. เลือกน้ำหนัก</h4>
-          <div class="row mb-1">
-            <div class="col-4 CenterButton">
-              <p>15 - 20 กิโลกรัม </p><p style="color: #3DFF50">( เบา )</p>
-            </div>
-            <div class="col-4 CenterButton" >
-              <p>20 - 25 กิโลกรัม </p><p style="color: #FFC107">( กลาง )</p>
-            </div>
-            <div class="col-4 CenterButton">
-              <p>25 - 40 กิโลกรัม </p><p style="color: #BD0000">( หนัก )</p>
-            </div>
-          </div> -->
-          <!-- <b-form-group label="1. เลือกแรง" v-slot="{ ariaDescribedby }">
-            <b-form-radio-group
-              id="btn-radios-2"
-              v-model="selected"
-              :options="options"
-              :aria-describedby="ariaDescribedby"
-              button-variant="outline-light"
-              name="radio-btn-outline"
-              buttons
-              class="CenterButton"
-            ></b-form-radio-group>
-          </b-form-group> -->
           <div class="row mb-1">
             <h5 class="mt-3">1. เลือกน้ำหนัก</h5>
             <div class="col-4 CenterButton">
-              <b-button :pressed.sync="LightBtn" variant="success" class="btnR"><a>15 - 20 กิโลกรัม </a><a style="color: #3DFF50">( เบา )</a></b-button>
+              <b-button :pressed.sync="LightBtn" variant="success" class="btnR"><a>15 - 20 กิโลกรัม </a><a style="color: #00FFFF">( เบา )</a></b-button>
 
             </div>
             <div class="col-4 CenterButton">
-              <b-button :pressed.sync="MidiumBtn" variant="success" class="btnR"><a>20 - 25 กิโลกรัม </a><a style="color: #FFC107">( กลาง )</a></b-button>
+              <b-button :pressed.sync="MidiumBtn" variant="success" class="btnR"><a>20 - 25 กิโลกรัม </a><a style="color: #3DFF50">( กลาง )</a></b-button>
 
             </div>
             <div class="col-4 CenterButton">
@@ -163,9 +119,11 @@
 </div>
 </template>
 <script>
-
+import Swal from 'sweetalert2'
 import imageBody from "../assets/Body.gif"
-import { onAuthStateChanged, getAuth} from "firebase/auth";
+import {firestoredb} from '../config';
+import { onAuthStateChanged, getAuth, signOut } from "firebase/auth";
+import { doc, onSnapshot, collection, query, setDoc} from "firebase/firestore"; 
 export default {
     name:'Home',
     data(){
@@ -177,6 +135,11 @@ export default {
         //   { html: '25 - 40 กิโลกรัม<a style="color: #BD0000">( หนัก )</a>', value: 'Heavy' },
           
         // ],
+        Device: null,
+        DeviceAPI: null,
+        StudentID: null,
+        selectedDeviceValue: "",
+				SelectDeviceArray: [],
         TestBtn: false,
         PracticeBtn: false,
         TenBtn: false,
@@ -194,38 +157,161 @@ export default {
       }
     },
     methods: {
+      signout() {
+        Swal.fire({
+          title: 'ต้องการออกจากระบบใช่หรือไม่?',
+          text: "หากตอบตกลง เราจะนำคุณออกจากระบบ",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'ออกจากระบบ',
+          cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const auth = getAuth();
+            signOut(auth).then(() => {
+              this.$router.replace("/");
+            }).catch((error) => {
+              console.log(error)
+            });
+          }
+        })
+      },
       btnCheck(){
         if (this.LightBtn==true&&this.TenBtn==true&&this.PracticeBtn==true){
           this.$router.push("/LightOnePractice")
         }
-        else if (this.LightBtn==true&&this.halfBtn==true&&this.PracticeBtn==true){
+        if (this.LightBtn==true&&this.halfBtn==true&&this.PracticeBtn==true){
           this.$router.push("/LightTwoPractice")
         }
-        else if (this.LightBtn==true&&this.fullBtn==true&&this.PracticeBtn==true){
-          this.$router.push("/LightThreePractice")
-        }
-        else if (this.MidiumBtn==true&&this.TenBtn==true&&this.PracticeBtn==true){
+        if (this.MidiumBtn==true&&this.TenBtn==true&&this.PracticeBtn==true){
           this.$router.push("/MidiumOnePractice")
         }
-        else if (this.MidiumBtn==true&&this.halfBtn==true&&this.PracticeBtn==true){
+        if (this.MidiumBtn==true&&this.halfBtn==true&&this.PracticeBtn==true){
           this.$router.push("/MidiumTwoPractice")
         }
-        else if (this.MidiumBtn==true&&this.fullBtn==true&&this.PracticeBtn==true){
-          this.$router.push("/MidiumThreePractice")
-        }
-        else if (this.HeavyBtn==true&&this.TenBtn==true&&this.PracticeBtn==true){
+        if (this.HeavyBtn==true&&this.TenBtn==true&&this.PracticeBtn==true){
           this.$router.push("/HeavyOnePractice")
         }
-        else if (this.HeavyBtn==true&&this.halfBtn==true&&this.PracticeBtn==true){
+        if (this.HeavyBtn==true&&this.halfBtn==true&&this.PracticeBtn==true){
           this.$router.push("/HeavyTwoPractice")
         }
-        else if (this.HeavyBtn==true&&this.fullBtn==true&&this.PracticeBtn==true){
-          this.$router.push("/HeavyThreePractice")
-        }
-        else if (this.LightBtn==true&&this.TenBtn==true&&this.TestBtn==true){
+        if (this.LightBtn==true&&this.TenBtn==true&&this.TestBtn==true){
           this.$router.push("/LightOneTest")
         }
-      }
+      },
+      getDevice(){
+        const q = query(collection(firestoredb, "Device"));
+            onSnapshot(q, (querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    this.SelectDeviceArray.push({'Id': doc.id, 'Name': doc.data().DeviceName});
+                });
+            });
+      },
+      getDeviceUser(StudentID){
+        onSnapshot(doc(firestoredb, "Students", StudentID), (doc) => {
+                this.DeviceAPI = doc.data().DeviceAPI;
+                this.Device = doc.data().DeviceNo;
+                console.log(this.Device);
+              });
+      },
+      getDeviceOne(){
+        Swal.fire({
+          title: 'ต้องการเลือก M-FiP No.01 ใช่หรือไม่?',
+          // text: "หากตอบตกลง เราจะนำคุณออกจากระบบ",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const docRef = setDoc(doc(firestoredb, "Students", this.StudentID.toString()), {
+              Name: this.displayNameUser,
+              StudentID: this.StudentID,
+              Email: this.emailUser,
+              DeviceNo: "M-FiP No.01",
+              DeviceAPI: "https://magellan.ais.co.th/pullmessageapis/api/listen/thing/57F86C983041DCBEFD8838A2E1F5A106",
+            });
+            console.log("Document written with ID: ", docRef.id);
+          }
+        })
+      },
+      getDeviceTwo(){
+        console.log("ok");
+        Swal.fire({
+          title: 'ต้องการเลือก M-FiP No.02 ใช่หรือไม่?',
+          // text: "หากตอบตกลง เราจะนำคุณออกจากระบบ",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const docRef = setDoc(doc(firestoredb, "Students", this.StudentID.toString()), {
+              Name: this.displayNameUser,
+              StudentID: this.StudentID,
+              Email: this.emailUser,
+              DeviceNo: "M-FiP No.02",
+              DeviceAPI: "https://magellan.ais.co.th/pullmessageapis/api/listen/thing/B2FA25E81912FE3465EB0CFE69CE826E",
+            });
+            console.log("Document written with ID: ", docRef.id);
+          }
+        })
+      },
+      // getDeviceSelected(selectedDeviceValue){
+      //   console.log(selectedDeviceValue);
+      //   if(selectedDeviceValue==1){
+      //     Swal.fire({
+      //     title: 'ต้องการเลือก M-FiP No.01 ใช่หรือไม่?',
+      //     // text: "หากตอบตกลง เราจะนำคุณออกจากระบบ",
+      //     icon: 'warning',
+      //     showCancelButton: true,
+      //     confirmButtonColor: '#3085d6',
+      //     cancelButtonColor: '#d33',
+      //     confirmButtonText: 'ใช่',
+      //     cancelButtonText: 'ยกเลิก'
+      //   }).then((result) => {
+      //     if (result.isConfirmed) {
+      //       const docRef = setDoc(doc(firestoredb, "Students", this.StudentID.toString()), {
+      //         Name: this.displayNameUser,
+      //         StudentID: this.StudentID,
+      //         Email: this.emailUser,
+      //         DeviceNo: "M-FiP No.01",
+      //         DeviceAPI: "https://magellan.ais.co.th/pullmessageapis/api/listen/thing/57F86C983041DCBEFD8838A2E1F5A106",
+      //       });
+      //       console.log("Document written with ID: ", docRef.id);
+      //     }
+      //   })
+      //   }
+      //   if(selectedDeviceValue==2){
+      //     Swal.fire({
+      //     title: 'ต้องการเลือก M-FiP No.02 ใช่หรือไม่?',
+      //     // text: "หากตอบตกลง เราจะนำคุณออกจากระบบ",
+      //     icon: 'warning',
+      //     showCancelButton: true,
+      //     confirmButtonColor: '#3085d6',
+      //     cancelButtonColor: '#d33',
+      //     confirmButtonText: 'ใช่',
+      //     cancelButtonText: 'ยกเลิก'
+      //   }).then((result) => {
+      //     if (result.isConfirmed) {
+      //       const docRef = setDoc(doc(firestoredb, "Students", this.StudentID.toString()), {
+      //         Name: this.displayNameUser,
+      //         StudentID: this.StudentID,
+      //         Email: this.emailUser,
+      //         DeviceNo: "M-FiP No.02",
+      //         DeviceAPI: "https://magellan.ais.co.th/pullmessageapis/api/listen/thing/B2FA25E81912FE3465EB0CFE69CE826E",
+      //       });
+      //       console.log("Document written with ID: ", docRef.id);
+      //     }
+      //   })
+      //   }
+      // },
         // getUser(auth){
         //   const user = auth.currentUser;
         //   console.log(user);
@@ -249,18 +335,28 @@ export default {
           this.displayNameUser = user.displayName;
           this.emailUser = user.email;
           this.photoURLUser = user.photoURL;
+          console.log(this.photoURLUser);
+          this.StudentID = (user.email).split("@")[0];
+          this.getDeviceUser(this.StudentID);
+          this.getDevice();
         }
       });
+      // this.getDeviceSelected(this.selectedDeviceValue);
       // window.onload = window.location.reload();
         // this.getUser(auth);
         // this.btnCheck()
       },
     updated(){
-      
-      // this.btnCheck()
-    //   setTimeout(function () { 
-    //   window.onload = location.reload();
-    // }, 2000);
+    // this.getDeviceSelected(this.selectedDeviceValue);
+    },
+    beforeCreate() {
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+          if (!user) {
+            this.$router.replace("/")
+            // alert("You don't have a permission")
+          }
+      });
     },
 }
 
@@ -284,13 +380,13 @@ h5 {
   margin: 10px;
   color: white;
 }
-header {
+/* header {
   padding: 60px;
   text-align: center;
   background: #1abc9c;
   color: rgb(17, 4, 77);
   font-size: 30px;
-}
+} */
 
 /* .sidebar {
   position: fixed;

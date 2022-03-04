@@ -1,15 +1,18 @@
 <template>
 <div class="header">
     <div class="sidebar">
-      <div class="insidebar" style="margin: 60px">
+      <div class="insidebar" style="margin: 50px">
         <tr>
         <h2 style="color: white">Welcome</h2>
         </tr>
         <tr>
-        <router-link style="text-decoration: none; color: inherit;" to="/Home" replace>Select Mode</router-link>
+        <router-link style="text-decoration: none; color: inherit; font-weight: normal;" to="/Home" replace>Select Mode</router-link>
         </tr>
         <tr>
-        <router-link style="text-decoration: none; color: inherit;" to="/Dashboard" replace>Dashboard</router-link>
+        <router-link style="text-decoration: none; color: inherit; font-weight: normal;" to="/UserPracticeHistory">Practice Certificate</router-link>
+        </tr>
+        <tr>
+        <router-link style="text-decoration: none; color: inherit; font-weight: normal;" to="/UserTestHistory">Test Certificate</router-link>
         </tr>
       </div>
     </div>
@@ -20,22 +23,30 @@
             <template #button-content>
               <img :src="photoURLUser" class="d-inline-block align-top" style="border-radius: 50%; width: 40px">
             </template>
-            <b-dropdown-item href="#">{{displayNameUser}}</b-dropdown-item>
-            <b-dropdown-item href="#">{{emailUser}}</b-dropdown-item>
+            <b-dropdown-group id="dropdown-group-1" header="ข้อมูลส่วนตัว">
+              <b-dropdown-item href="#">{{displayNameUser}}</b-dropdown-item>
+              <b-dropdown-item href="#">{{emailUser}}</b-dropdown-item>
+            </b-dropdown-group>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-group id="dropdown-group-1" header="อุปกรณ์">
+              <b-dropdown-item v-for="SelectDe in SelectDeviceArray" v-bind:key="SelectDe.Id" v-bind:value="SelectDe.Id">{{SelectDe.Name}}</b-dropdown-item>
+            </b-dropdown-group>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-item-button v-on:click="signout">ออกจากระบบ</b-dropdown-item-button>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-navbar>
     </div>
   <div class="container">
     <h3 style="margin-top: 40px">จุดสัญญาณในการนวด</h3>
-    <h3 style="color: #28A745; margin-bottom: 40px;">( คาบเบา )</h3>
+    <h3 style="color: #00FFFF; margin-bottom: 40px;">( คาบเบา )</h3>
     <div class="row">
       <div class="col-sm-6">
         <h4 style="margin-bottom: 10px">กดตรงจุดที่แสดงไว้ดังนี้</h4>
         
         <tr>
         <td><div class="cardB col" style="margin-left: 15%">
-          <div class="card text-white bg-success mb-3" style="width: 150px">
+          <div class="card text-white bg-info mb-3" style="width: 150px">
             <div class="card-header">แรง</div>
             <div class="card-body">
               <h2 class="card-title">15-20</h2>
@@ -45,7 +56,7 @@
           </div>
         </td>
         <td><div class="cardB col" style="margin-left: 15%">
-          <div class="card text-white bg-success mb-3" style="width: 150px">
+          <div class="card text-white bg-info mb-3" style="width: 150px">
             <div class="card-header">เวลา</div>
             <div class="card-body">
               <h2 class="card-title">10-15</h2>
@@ -59,19 +70,6 @@
         <img :src="image" width="200" height="300"/>
       </div>
       <div class="col-sm-6">
-        <!-- <div style="margin-bottom: 60px margin-left: 150px">
-          <tr>
-            <td>
-              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:90%">
-                <h2 style="margin-right: 150px">{{ timerCount }} / 10 sec</h2>
-              </div>
-              <div style="margin-left: 400px">
-              <h3>{{ timerCountDone }} / 10 วินาที</h3>
-              </div>
-            </td>
-          </tr>
-        </div> -->
-        <!-- <progress-bar>Creating User...</progress-bar> -->
         <div>
           <div class="row mb-1">
             <div class="col-sm-3">กดไปแล้ว:</div>
@@ -82,20 +80,6 @@
               <h5>/10 วินาที</h5>
             </div>
           </div>
-        <!-- <k-progress 
-          active 
-          status="error" 
-          type="line"
-          :border= "false"
-          :line-height= "30"
-          :color-flow= "true"
-          :flow-second= "2"
-          :color=" ['#40a9ff', '#5cdbd3']"
-          :percent= "timerCountDone*10"
-          :show-text= "false" >
-        </k-progress>
-        <h5>{{ timerCountDone }} / 10 วินาที</h5> -->
-
         </div>
         
         <b-alert v-if="ForcePush<15" variant="danger" show><h5>คุณออกแรงน้อยเกินไป โปรดออกแรงกดเพิ่มขึ้น !!</h5></b-alert>
@@ -113,20 +97,6 @@
         :series="series"
       ></apexchart>
     </div>
-    <!-- <div v-if="FinishPush==true" id="chartTwo">
-      <apexchart
-        type="line"
-        width="800"
-        height="400"
-        ref="chart"
-        :options="chartOptionsTwo"
-        :series="series"
-      ></apexchart>
-    </div> -->
-    <!-- <div class="flex justify-center">
-    <Button @mouseover="play" @mouseleave="stop" label="Trumpet"> 🎺 </Button>
-    </div> -->
-
       </div>
     </div>
   </div>
@@ -141,7 +111,7 @@ import VueApexCharts from "vue-apexcharts";
 import axios from 'axios';
 
 import {firestoredb} from '../config';
-import {collection, getDocs, doc, setDoc, serverTimestamp } from "firebase/firestore"; 
+import {collection, getDocs, doc, setDoc, serverTimestamp, onSnapshot } from "firebase/firestore"; 
 import 'firebase/compat/database'
 // import {ref, onValue } from "firebase/database";
 import Swal from 'sweetalert2'
@@ -150,7 +120,7 @@ import winSound from '../assets/cheerful.mp3'
 import oneSec from '../assets/OneSec.mp3'
 import start from '../assets/Start.mp3'
 
-import { onAuthStateChanged, getAuth} from "firebase/auth";
+import { onAuthStateChanged, getAuth, signOut} from "firebase/auth";
 var data = [];
 let XAXISRANGE = 25;
 
@@ -177,6 +147,8 @@ export default {
   },
   data() {
     return {
+        SelectDeviceArray: [],
+        Device: null,
         StudentID: null,
         size: 0,
         displayNameUser: null,
@@ -276,16 +248,6 @@ export default {
   mounted: function () {
     console.log(firestoredb);
     console.log(serverTimestamp());
-    // this.fillData()
-
-        // if(this.FinishPush==true){
-        //   // this.$refs.chartTwo.updateSeries([
-        //   //   {
-        //   //     data: data,
-        //   //   },
-        //   //   ]);
-        //   // this.fillData();
-        // }
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
         if(user){
@@ -295,13 +257,17 @@ export default {
           this.emailUser = user.email;
           this.StudentID = (user.email).split("@")[0];
           this.photoURLUser = user.photoURL;
+          this.DocIDSize(user)
+          this.getDevice(this.StudentID);
+          this.getIDDevice(this.StudentID)
         }
         });
 
-      this.DocIDSize()
+      // this.DocIDSize()
       
       // this.getNewSeries();
       this.alertStart();
+      // this.getDevice();
       // this.getDataMag();
     window.setInterval(() => {
       // this.getNewSeries();
@@ -313,17 +279,44 @@ export default {
         
     }, 1000);
   },
-  updated(){
-
-      // this.$refs.chart.updateSeries([
-      //   {
-      //     data: data,
-      //   },
-      // ]);
-  },
+  beforeCreate() {
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+          if (!user) {
+            this.$router.replace("/")
+            // alert("You don't have a permission")
+          }
+      });
+    },
+  // updated(){
+  // },
+  // destroyed(){
+  //   console.log("Stop!")
+  // },
   methods: {
-      DocIDSize(){
-        getDocs(collection(firestoredb, "History")).then(snap => {
+      signout() {
+        Swal.fire({
+          title: 'ต้องการออกจากระบบใช่หรือไม่?',
+          text: "หากตอบตกลง เราจะนำคุณออกจากระบบ",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'ออกจากระบบ',
+          cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const auth = getAuth();
+            signOut(auth).then(() => {
+              this.$router.replace("/");
+            }).catch((error) => {
+              console.log(error)
+            });
+          }
+        })
+      },
+      DocIDSize(user){
+        getDocs(collection(firestoredb,"Students",user.email.split("@")[0], "PracticeHistory")).then(snap => {
           this.size = snap.size // will return the collection size
           console.log(this.size);
           // this.size+1;
@@ -347,20 +340,19 @@ export default {
             this.CheckStatusDone();
           }
       },
-      CheckStatusDone(){
-          // if (this.timerCountDone>10){
-            // if (data[data.length-1].y==0&&data[data.length-2].y!=0){
-            // this.win.play();
-            // this.fillData();
-            // }
-          // }
-      },
       fillData () {
+        if(this.Device=="https://magellan.ais.co.th/pullmessageapis/api/listen/thing/57F86C983041DCBEFD8838A2E1F5A106"){
+            this.Device = "Device No.01";
+          }
+        else if(this.Device=="https://magellan.ais.co.th/pullmessageapis/api/listen/thing/B2FA25E81912FE3465EB0CFE69CE826E"){
+          this.Device = "Device No.02";
+        }
        try {
-          const docRef = setDoc(doc(firestoredb, "History", ((this.size)+1).toString()), {
-            ForcData: this.ForcData,
-            TimeSec: this.TimeSec,
+          const docRef = setDoc(doc(firestoredb, "Students", this.StudentID.toString(),"PracticeHistory", ((this.size)+1).toString()), {
+            // ForcData: this.ForcData,
+            // TimeSec: this.TimeSec,
             ChartData: data,
+            Device: this.Device,
             Name: this.displayNameUser,
             StudentID: this.StudentID,
             Mode: "คาบเบา",
@@ -384,8 +376,20 @@ export default {
           // this.fillData()
         });
       },
+      getDevice(StudentID){
+        onSnapshot(doc(firestoredb, "Students", StudentID), (doc) => {
+                this.Device = doc.data().DeviceAPI;
+                console.log(this.Device);
+              });
+      },
+      getIDDevice(StudentID){
+        onSnapshot(doc(firestoredb, "Students", StudentID), (doc) => {
+                console.log(doc.data().Device);
+                this.SelectDeviceArray.push({'Id': doc.data().Device, 'Name': doc.data().DeviceNo});
+              });
+      },
       getDataMag(){
-        axios.get('https://magellan.ais.co.th/pullmessageapis/api/listen/thing/57F86C983041DCBEFD8838A2E1F5A106').then(response => {
+        axios.get(this.Device).then(response => {
           setTimeout(() => {
           this.ForcePush = Math.floor(response.data.Sensor.force);
           },100);
@@ -406,36 +410,6 @@ export default {
             this.timerCountDone=0;
         }
         },
-    //---
-    // getNewSeries() {
-    //   const dbRef = ref(db, 'Sensor');
-    //   // setTimeout(() => {
-    //     onValue(dbRef, (snapshot) => {
-    //     // setTimeout(() => {
-    //       this.ForcePush = Math.round(snapshot.val().Data);
-    //       this.StatusPush = snapshot.val().Status;
-    //     });
-
-    //     this.ForcData.push(this.ForcePush);
-    //     console.log(this.ForcData);
-    //     data.push({
-    //         x: this.timerCount+" sec",
-    //         y: this.ForcePush,
-    //       });
-    //       if(this.ForcData[this.ForcData.length-1]>=15 && this.ForcData[this.ForcData.length-1]<=20){
-    //         // if(data[this.ForcePush<60 && this.ForcePush>=50]){
-
-    //         // setTimeout(() => {
-    //         this.timerCountDone++;
-    //         // },1000);
-    //       }
-    //       else{
-    //         this.timerCountDone=0;
-    //       }
-
-    //     // },1000);
-    // },
-
   },
     watch: {
             timerCount: {
@@ -448,16 +422,6 @@ export default {
                             this.TimeSec.push(this.timerCount);   
                         }, 1000);
                     }
-                    // else if (value == 5){
-                    //     this.$fire({
-                    //         title: "จะเริ่มใน...",
-                    //         text: "",
-                    //         timer: 3000,
-                    //         timerProgressBar: true,
-                    //         showConfirmButton: false,
-                    //       })
-                    // }
-
                 },
                 immediate: true // This ensures the watcher is triggered upon creation
             },
@@ -467,25 +431,8 @@ export default {
                         // if (value > 0 ) {
                           if (value == 10) {
                             this.OneSec.play();
-                            // this.CheckStatusDone();
-
-                              // this.win.play();
-                              // this.fillData();
-
-                              // setTimeout(() => {
-                              Swal.fire({
-                                title: "สำเร็จ!!",
-                                text: "คุณกดด้วยแรง 15-20 กิโลกรัม เป็นเวลา 10-15 วินาที สำเร็จ!!",
-                                type: "success",
-                                // timer: 5000
-                              }).then(r => {
-                              console.log(r.value);
-                              // this.FinishPush=true;
-                              this.fillData()
-                              // this.$router.push("/Home")
-                              });
+                            this.StatusPush = true;
                               this.win.play();
-                              // this.fillData();
                           }
                           else if(value==8){
                               this.OneSec.play();
@@ -498,29 +445,23 @@ export default {
                   },
                   immediate: true // This ensures the watcher is triggered upon creation
             },
-            // ForcePush:{
-            //     handler(value) {
-            //             // if (value[value.length-1]>0){
-            //               if (value >= 15 && value <= 20){
-            //                 this.ForcData.push(this.ForcePush);
-            //                 this.TimeSec.push(this.timerCount); 
-            //                 console.log(this.ForcData);
-            //                 if(this.FinishPush == true){
-            //                     this.fillData();
-            //                 }
-            //               }
-
-            //               else if(value > 15 && value > 20) {
-            //                 this.FinishPush == false;
-            //                 this.ForcData==[];
-            //                 this.TimeSec==[];
-            //                 console.log(this.ForcData);
-            //               }
-            //             // }
-
-            //       },
-            //       immediate: true // This ensures the watcher is triggered upon creation
-            // }
+            ForcePush:{
+                handler(value) {
+                        // if (value[value.length-1]>0){
+                          if (this.StatusPush==true && value==0){
+                            Swal.fire({
+                                title: "สำเร็จ!!",
+                                text: "คุณกดด้วยแรง 15-20 กิโลกรัม เป็นเวลา 10-15 วินาที สำเร็จ!!",
+                                type: "success",
+                              }).then(r => {
+                              console.log(r.value);
+                              this.fillData()
+                              this.$router.push("/Home")
+                              });
+                          }
+                  },
+                  immediate: true // This ensures the watcher is triggered upon creation
+            }
     },
 };
 </script>  

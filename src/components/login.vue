@@ -96,7 +96,9 @@
 </template>
 <script>
 // import firebase from 'firebase/compat/app';
+import {firestoredb} from '../config';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {doc, setDoc } from "firebase/firestore"; 
 // import * as firebase from "firebase/compat/app";
 
 // import '@/assets/css/main.css';
@@ -138,20 +140,46 @@ export default {
                   // const credential = GoogleAuthProvider.credentialFromResult(result);
                   // const token = credential.accessToken;
                   // // The signed-in user info.
-                  // const user = result.user;
-                  this.$router.replace("/Home");
+                  const user = result.user;
+                  console.log(user.email);
+                  if (((user.email).split("@")[1])=="lamduan.mfu.ac.th"){
+                    console.log("lamduan-mail !!");
+                    try {
+                      const UserID = user.email.split("@")[0];
+                      const docRef = setDoc(doc(firestoredb, "Students", UserID.toString()), {
+                        Name: user.displayName,
+                        StudentID: UserID,
+                        Email: user.email,
+                        // DeviceAPI: "https://magellan.ais.co.th/pullmessageapis/api/listen/thing/B2FA25E81912FE3465EB0CFE69CE826E",
+                        // DeviceNo: "M-FiP No.02",
+                      });
+                      console.log("Document written with ID: ", docRef.id);
+                    } catch (e) {
+                      console.error("Error adding document: ", e);
+                    }
+                    this.$router.replace("/Home");
+                  }
+                  else if(((user.email).split("@")[0])=="tanyawut.mlii"){
+                    console.log("Admin");
+                    this.$router.replace("/HomeAdmin");
+
+                  }
+                  else{
+                    alert("Please login with lamduan-mail.");
+                    console.log("Worng !!");
+                  }
                   // ...
                 })
-                // .catch((error) => {
-                //   // Handle Errors here.
-                //   const errorCode = error.code;
-                //   const errorMessage = error.message;
-                //   // The email of the user's account used.
-                //   const email = error.email;
-                //   // The AuthCredential type that was used.
-                //   const credential = GoogleAuthProvider.credentialFromError(error);
-                //   // ...
-                // });
+                .catch((error) => {
+                  // Handle Errors here.
+                  const errorCode = error.code;
+                  const errorMessage = error.message;
+                  // The email of the user's account used.
+                  const email = error.email;
+                  // The AuthCredential type that was used.
+                  const credential = GoogleAuthProvider.credentialFromError(error);
+                  // ...
+                });
 
        }
        /* eslint-disable */

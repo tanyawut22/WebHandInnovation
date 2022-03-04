@@ -7,6 +7,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import SkeletonCards from 'vue-ultimate-skeleton-cards'
 
+
 // Import Bootstrap an BootstrapVue CSS files (order is important)
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'

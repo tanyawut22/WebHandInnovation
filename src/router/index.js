@@ -22,9 +22,29 @@ export default new Router({
       component: () => import('../components/Home.vue'),
     },
     {
-      path: '/Dashboard',
-      name: 'Dashboard',
-      component: () => import('../components/Dashboard.vue'),
+      path: '/HomeAdmin',
+      name: 'HomeAdmin',
+      component: () => import('../components/HomeAdmin.vue'),
+    },
+    {
+      path: '/PracticeMode',
+      name: 'PracticeMode',
+      component: () => import('../components/PracticeHistory.vue'),
+    },
+    {
+      path: '/TestMode',
+      name: 'TestMode',
+      component: () => import('../components/TestHistory.vue'),
+    },
+    {
+      path: '/UserPracticeHistory',
+      name: 'UserPracticeHistory',
+      component: () => import('../components/UserPracticeHistory.vue'),
+    },
+    {
+      path: '/UserTestHistory',
+      name: 'UserTestHistory',
+      component: () => import('../components/UserTestHistory.vue'),
     },
     {
       path: '/LightOnePractice',
@@ -37,11 +57,6 @@ export default new Router({
       component: () => import('../components/LightTwoPractice.vue'),
     },
     {
-      path: '/LightThreePractice',
-      name: 'LightThreePractice',
-      component: () => import('../components/LightThreePractice.vue'),
-    },
-    {
       path: '/MidiumOnePractice',
       name: 'MidiumOnePractice',
       component: () => import('../components/MidiumOnePractice.vue'),
@@ -50,11 +65,6 @@ export default new Router({
       path: '/MidiumTwoPractice',
       name: 'MidiumTwoPractice',
       component: () => import('../components/MidiumTwoPractice.vue'),
-    },
-    {
-      path: '/MidiumThreePractice',
-      name: 'MidiumThreePractice',
-      component: () => import('../components/MidiumThreePractice.vue'),
     },
     {
       path: '/HeavyOnePractice',
@@ -67,24 +77,9 @@ export default new Router({
       component: () => import('../components/HeavyTwoPractice.vue'),
     },
     {
-      path: '/HeavyThreePractice',
-      name: 'HeavyThreePractice',
-      component: () => import('../components/HeavyThreePractice.vue'),
-    },
-    {
       path: '/LightOneTest',
       name: 'LightOneTest',
       component: () => import('../components/LightOneTest.vue'),
-    },
-    {
-      path: '/BackHeavyOne',
-      name: 'BackHeavyOne',
-      component: () => import('../components/BackHeavyOne.vue'),
-    },
-    {
-      path: '/BackHeavyTwo',
-      name: 'BackHeavyTwo',
-      component: () => import('../components/BackHeavyTwo.vue'),
     },
   ]
 })
