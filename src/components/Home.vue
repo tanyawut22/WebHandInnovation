@@ -157,6 +157,9 @@ export default {
       }
     },
     methods: {
+      // loadOnce:function(){
+      //   location.reload();
+      // },
       signout() {
         Swal.fire({
           title: 'ต้องการออกจากระบบใช่หรือไม่?',
@@ -199,6 +202,21 @@ export default {
         }
         if (this.LightBtn==true&&this.TenBtn==true&&this.TestBtn==true){
           this.$router.push("/LightOneTest")
+        }
+        if (this.LightBtn==true&&this.halfBtn==true&&this.TestBtn==true){
+          this.$router.push("/LightTwoTest")
+        }
+        if (this.MidiumBtn==true&&this.TenBtn==true&&this.TestBtn==true){
+          this.$router.push("/MidiumOneTest")
+        }
+        if (this.MidiumBtn==true&&this.halfBtn==true&&this.TestBtn==true){
+          this.$router.push("/MidiumTwoTest")
+        }
+        if (this.HeavyBtn==true&&this.TenBtn==true&&this.TestBtn==true){
+          this.$router.push("/HeavyOneTest")
+        }
+        if (this.HeavyBtn==true&&this.halfBtn==true&&this.TestBtn==true){
+          this.$router.push("/HeavyTwoTest")
         }
       },
       getDevice(){
@@ -327,11 +345,20 @@ export default {
         // }
       },
       mounted(){
+        if (localStorage.getItem('reloaded')) {
+            // The page was just reloaded. Clear the value from local storage
+            // so that it will reload the next time this page is visited.
+            localStorage.removeItem('reloaded');
+        } else {
+            // Set a flag so that we know not to reload the page twice.
+            localStorage.setItem('reloaded', '1');
+            location.reload();
+        }
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
         if(user){
-          const uid = user.uid;
-          console.log(uid)
+          // const uid = user.uid;
+          // console.log(uid)
           this.displayNameUser = user.displayName;
           this.emailUser = user.email;
           this.photoURLUser = user.photoURL;

@@ -64,15 +64,15 @@
         ></apexchart>
       </div>
       <div>
-          <a><strong>ชื่อ: </strong>{{Name}}</a>
+          <a style="font-size: 20px;"><strong>ชื่อ: </strong>{{Name}}</a>
         <br>
-          <a><strong>รหัสนักศึกษา: </strong>{{StudentID}}</a>
+          <a style="font-size: 20px;"><strong>รหัสนักศึกษา: </strong>{{StudentID}}</a>
         <br>
-          <a><strong>โหมดการทดสอบ: </strong>{{Modetext}} ( {{Mode}} ) เป็นเวลา {{ModeSec}} วินาที</a>
+          <a style="font-size: 20px;"><strong>โหมดการทดสอบ: </strong>{{Modetext}} ( {{Mode}} ) เป็นเวลา {{ModeSec}} วินาที</a>
         <br>
-          <a><strong>ด้วยอุปกรณ์: </strong>{{Device}}</a>
+          <a style="font-size: 20px;"><strong>ด้วยอุปกรณ์: </strong>{{Device}}</a>
         <br>
-          <a><strong>วันที่: </strong>{{DateDone}} เวลา {{TimeDone}} น.</a>
+          <a style="font-size: 20px;"><strong>วันที่: </strong>{{DateDone}} เวลา {{TimeDone}} น.</a>
       </div>
 
     </div>
@@ -308,11 +308,21 @@ export default {
     },
 
     mounted(){
+        if (localStorage.getItem('reloaded')) {
+            // The page was just reloaded. Clear the value from local storage
+            // so that it will reload the next time this page is visited.
+            localStorage.removeItem('reloaded');
+        } else {
+            // Set a flag so that we know not to reload the page twice.
+            localStorage.setItem('reloaded', '1');
+            location.reload();
+        }
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
         if(user){
-          const uid = user.uid;
-          console.log(uid)
+          // const uid = user.uid;
+          // console.log(uid)
+          // console.log(user)
           this.displayNameUser = user.displayName;
           this.emailUser = user.email;
           this.photoURLUser = user.photoURL;

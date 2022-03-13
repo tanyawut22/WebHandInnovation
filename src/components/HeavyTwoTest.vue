@@ -32,7 +32,7 @@
   <div class="container">
     <h3 style="margin-top: 40px">โหมดทดสอบจุดสัญญาณในการนวด</h3>
     <!-- <h3 style="color: #28A745; margin-bottom: 40px;">( คาบเบา )</h3> -->
-    <h4>กดด้วยแรง 15-20 กิโลกรัม เป็นเวลา 10-15 วินาที</h4>
+    <h4>กดด้วยแรง 25-40 กิโลกรัม เป็นเวลา 30-45 วินาที</h4>
     <h5 style="margin-bottom: 40px; color: #BD0000; font-weight: normal;" >ระบบจะบันทึกเมื่อคุณปล่อยมือ</h5>
     <div class="row">
       <div class="col-sm-12">
@@ -74,7 +74,7 @@ var data = [];
 let XAXISRANGE = 50;
 
 export default {
-  name: "LightOneTest",
+  name: "HeavyTwoTest",
   components: {
     // LineChart,
     // Line,
@@ -229,8 +229,8 @@ export default {
             Name: this.displayNameUser,
             StudentID: this.StudentID,
             Device: this.Device,
-            Mode: "คาบเบา",
-            ModeSec: "10-15",
+            Mode: "คาบหนัก",
+            ModeSec: "30-45",
             DateDone: serverTimestamp(),
           });
           console.log("Document written with ID: ", docRef.id);
@@ -240,7 +240,7 @@ export default {
       },
       alertStart(){
         Swal.fire({
-          title: "กดด้วยแรง 15-20 กิโลกรัม เป็นเวลา 10-15 วินาที",
+          title: "กดด้วยแรง 25-40 กิโลกรัม เป็นเวลา 30-45 วินาที",
           text: "จะเริ่มใน...",
           timer: 3000,
           timerProgressBar: true,

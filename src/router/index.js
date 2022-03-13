@@ -81,5 +81,31 @@ export default new Router({
       name: 'LightOneTest',
       component: () => import('../components/LightOneTest.vue'),
     },
+    {
+      path: '/LightTwoTest',
+      name: 'LightTwoTest',
+      component: () => import('../components/LightTwoTest.vue'),
+    },
+    {
+      path: '/MidiumOneTest',
+      name: 'MidiumOneTest',
+      component: () => import('../components/MidiumOneTest.vue'),
+    },
+    {
+      path: '/MidiumTwoTest',
+      name: 'MidiumTwoTest',
+      component: () => import('../components/MidiumTwoTest.vue'),
+    },
+    {
+      path: '/HeavyOneTest',
+      name: 'HeavyOneTest',
+      component: () => import('../components/HeavyOneTest.vue'),
+    },
+    {
+      path: '/HeavyTwoTest',
+      name: 'HeavyTwoTest',
+      component: () => import('../components/HeavyTwoTest.vue'),
+    },
+
   ]
 })

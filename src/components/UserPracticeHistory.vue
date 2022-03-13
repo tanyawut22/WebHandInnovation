@@ -35,7 +35,8 @@
             </b-dropdown-group>
             <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-group id="dropdown-group-1" header="อุปกรณ์">
-              <b-dropdown-item v-for="SelectDe in SelectDeviceArray" v-bind:key="SelectDe.Id" v-bind:value="SelectDe.Id">{{SelectDe.Name}}</b-dropdown-item>
+              <b-dropdown-item-button disabled>ท่านกำลังใช้งาน {{Device}}</b-dropdown-item-button>
+              <!-- <b-dropdown-item v-for="SelectDe in SelectDeviceArray" v-bind:key="SelectDe.Id" v-bind:value="SelectDe.Id">{{SelectDe.Name}}</b-dropdown-item> -->
             </b-dropdown-group>
             <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-item-button v-on:click="signout">ออกจากระบบ</b-dropdown-item-button>
@@ -119,6 +120,7 @@ export default {
   data() {
          return{
            /* eslint-disable no-mixed-spaces-and-tabs */
+          Device: null,
           DateDropdown: null,
           ModeSec: null,
           Modetext: "",
@@ -256,6 +258,15 @@ export default {
 
         },
         mounted() {
+          if (localStorage.getItem('reloaded')) {
+              // The page was just reloaded. Clear the value from local storage
+              // so that it will reload the next time this page is visited.
+              localStorage.removeItem('reloaded');
+          } else {
+              // Set a flag so that we know not to reload the page twice.
+              localStorage.setItem('reloaded', '1');
+              location.reload();
+          }
 				// this.selectedValue = "0"
           const auth = getAuth();
           onAuthStateChanged(auth, (user) => {
@@ -265,7 +276,9 @@ export default {
               this.displayNameUser = user.displayName;
               this.emailUser = user.email;
               this.photoURLUser = user.photoURL;
+              this.StudentID = (user.email).split("@")[0];
               this.getAllDoc(user)
+              this.getDeviceUser(this.StudentID);
             }
           });
           // this.getChart();
@@ -303,6 +316,13 @@ export default {
                 });
               }
             })
+          },
+          getDeviceUser(StudentID){
+            onSnapshot(doc(firestoredb, "Students", StudentID), (doc) => {
+                    this.DeviceAPI = doc.data().DeviceAPI;
+                    this.Device = doc.data().DeviceNo;
+                    console.log(this.Device);
+                  });
           },
           PutData(){
             data = this.ChartData;

@@ -32,7 +32,7 @@
   <div class="container">
     <h3 style="margin-top: 40px">โหมดทดสอบจุดสัญญาณในการนวด</h3>
     <!-- <h3 style="color: #28A745; margin-bottom: 40px;">( คาบเบา )</h3> -->
-    <h4>กดด้วยแรง 15-20 กิโลกรัม เป็นเวลา 10-15 วินาที</h4>
+    <h4>กดด้วยแรง 15-20 กิโลกรัม เป็นเวลา 30-45 วินาที</h4>
     <h5 style="margin-bottom: 40px; color: #BD0000; font-weight: normal;" >ระบบจะบันทึกเมื่อคุณปล่อยมือ</h5>
     <div class="row">
       <div class="col-sm-12">
@@ -74,13 +74,26 @@ var data = [];
 let XAXISRANGE = 50;
 
 export default {
-  name: "LightOneTest",
+  name: "LightTwoTest",
   components: {
     // LineChart,
     // Line,
     apexchart: VueApexCharts,
   },
+//   setup() {
+//     const { play, stop } = useSound(winSound)
+//     const win = useSound(winSound)
+//     const OneSec = useSound(oneSec)
+//     const StartSound = useSound(start)
 
+//     return {
+//       play,
+//       stop,
+//       win,
+//       OneSec,
+//       StartSound,
+//     }
+//   },
   data() {
     return {
         DeviceAPI: null,
@@ -131,6 +144,22 @@ export default {
           xaxis: [{
           range: XAXISRANGE,
           }],
+        //   yaxis: [{
+        //     // max: 100,
+        //     y: 15,
+        //     y2: 20,
+        //     borderColor: '#000',
+        //     fillColor: '#00D12C',
+        //     opacity: 0.2,
+        //     label: {
+        //       text: 'Good',
+        //       style: {
+        //         fontSize: '10px',
+        //         color: '#333',
+        //         background: '#00D12C',
+        //       },
+        //     }
+        //   }],
         },
         dataLabels: {
           enabled: true,
@@ -169,6 +198,16 @@ export default {
   mounted: function () {
     console.log(firestoredb);
     console.log(serverTimestamp());
+    // this.fillData()
+
+        // if(this.FinishPush==true){
+        //   // this.$refs.chartTwo.updateSeries([
+        //   //   {
+        //   //     data: data,
+        //   //   },
+        //   //   ]);
+        //   // this.fillData();
+        // }
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
         if(user){
@@ -201,8 +240,10 @@ export default {
     
   },
   updated(){
+ 
   },
   methods: {
+
       DocIDSize(user){
         getDocs(collection(firestoredb,"Students",user.email.split("@")[0], "TestHistory")).then(snap => {
           this.size = snap.size // will return the collection size
@@ -216,6 +257,7 @@ export default {
                 console.log(this.Device);
               });
       },
+ 
       fillData () {
         if(this.Device=="https://magellan.ais.co.th/pullmessageapis/api/listen/thing/57F86C983041DCBEFD8838A2E1F5A106"){
             this.Device = "M-FiP No.01";
@@ -230,7 +272,7 @@ export default {
             StudentID: this.StudentID,
             Device: this.Device,
             Mode: "คาบเบา",
-            ModeSec: "10-15",
+            ModeSec: "30-45",
             DateDone: serverTimestamp(),
           });
           console.log("Document written with ID: ", docRef.id);
@@ -240,7 +282,7 @@ export default {
       },
       alertStart(){
         Swal.fire({
-          title: "กดด้วยแรง 15-20 กิโลกรัม เป็นเวลา 10-15 วินาที",
+          title: "กดด้วยแรง 15-20 กิโลกรัม เป็นเวลา 30-45 วินาที",
           text: "จะเริ่มใน...",
           timer: 3000,
           timerProgressBar: true,

@@ -159,7 +159,7 @@ export default {
                     }
                     this.$router.replace("/Home");
                   }
-                  else if(((user.email).split("@")[0])=="tanyawut.mlii"){
+                  else if(((user.email).split("@")[1])=="mfu.ac.th"){
                     console.log("Admin");
                     this.$router.replace("/HomeAdmin");
 

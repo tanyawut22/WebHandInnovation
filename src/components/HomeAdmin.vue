@@ -54,12 +54,12 @@
       </b-navbar>
     </div>
     <div class="container">
-      <BIconArrow90degDown />
+      <!-- <BIconArrow90degDown /> -->
       <h1 style="text-align: center;">ภาพรวมระบบ</h1>
       <div class="row">
         <div class="col-sm-5">
         <b-card bg-variant="primary" text-variant="white" class="text-center" style="width: 300px; height: 80px">
-          <b-card-text>ผู้ใช้งานในระบบทั้งหมด 3 คน</b-card-text>
+          <h6>ผู้ใช้งานในระบบทั้งหมด</h6><h4>{{sizeUser}} คน</h4>
           <i class="bi bi-person-fill"></i>
         </b-card>
         </div>
@@ -68,12 +68,22 @@
         </div>
         <div class="col-sm-5">
         <b-card bg-variant="info" text-variant="white" class="text-center" style="width: 300px; height: 80px">
-          <b-card-text>จำนวนอุปกรณ์ทั้งหมด 1 เครื่อง</b-card-text>
+          <h6>จำนวนอุปกรณ์ทั้งหมด</h6><h4> {{sizeDevice}} เครื่อง</h4>
         </b-card>
         </div>
       </div>
       <div style="margin-top: 80px;">
-        <apexchart type="bar" height="350" width="900" :options="chartOptions" :series="series"></apexchart>
+        <!-- <div class="row mb-1">
+          <div class="col-10 CenterButton"> -->
+            <apexchart type="bar" height="350" width="700" ref="chart" :options="chartOptions" :series="series"></apexchart>
+          <!-- </div>
+          <div class="col-2 CenterButton">  
+            <apexchart type="pie" height="150" width="150" ref="chartPie" :options="chartOptions3" :series="series3"></apexchart>
+          </div>
+        </div> -->
+        <br>
+        <h6>จำนวนครั้งทั้งหมดในโหมดฝึก {{sizePractice}} ครั้ง </h6>
+        <h6>จำนวนครั้งทั้งหมดในโหมดทดสอบ {{sizeTest}} ครั้ง</h6>
       </div>
       <!-- <h3 style="text-align: center;">ของ {{Name}}</h3> -->
       <!-- <div id="chart" style="margin-bottom: 20px;">
@@ -106,23 +116,27 @@
 </template>
 
 <script>
-import { BIconArrow90degDown } from 'bootstrap-icons-vue';
 import Swal from 'sweetalert2'
 import VueApexCharts from "vue-apexcharts";
 import {firestoredb} from '../config';
 import { onAuthStateChanged, getAuth, signOut } from "firebase/auth";
-import { collection, query, onSnapshot, doc} from "firebase/firestore";
-var data = [];
+import { collection, getDocs} from "firebase/firestore";
+var data1 = [];
+var data2 = [];
 export default {
     name:'HomeAdmin',
     components: {
       apexchart: VueApexCharts,
-      BIconArrow90degDown,
     },
     data(){
       return{
         Device: null,
-        size: null,
+        sizeTest: null,
+        sizePractice: null,
+        sizeArray1: [],
+        sizeArray2: [],
+        sizeUser: null,
+        sizeDevice: null,
         TimeDone: null,
         Name: null,
         Mode: null,
@@ -138,12 +152,33 @@ export default {
         emailUser: null,
         uidUser: null,
         photoURLUser: null,
-        series: [{
+        // series3: [1],
+        //   chartOptions3: {
+        //     chart: {
+        //       type: 'pie',
+        //       width: 40,
+        //       height: 40,
+        //       sparkline: {
+        //         enabled: true
+        //       }
+        //     },
+        //     stroke: {
+        //       width: 1
+        //     },
+        //     tooltip: {
+        //       fixed: {
+        //         enabled: false
+        //       },
+        //     }
+        //   },
+        series: [
+          {
             name: 'Practice Mode',
-            data: [18, 21, 22]
-          }, {
+            data: []
+          }, 
+          {
             name: 'Test Mode',
-            data: [9, 4, 7]
+            data: []
           }],
           chartOptions: {
             chart: {
@@ -166,11 +201,11 @@ export default {
               colors: ['transparent']
             },
             xaxis: {
-              categories: ['6031302001', '6031302002', '6031302003'],
+              categories: ['ค่าเฉลี่ยจำนวนครั้งต่อคน'],
             },
             yaxis: {
               title: {
-                text: 'จำนวนครั้งที่ปฏิบัติ'
+                text: 'จำนวนที่ปฏิบัติ (ครั้ง)'
               }
             },
             fill: {
@@ -210,137 +245,160 @@ export default {
             }
             })
         },
-        getStudentID(){
-            const q = query(collection(firestoredb, "Students"));
-            onSnapshot(q, (querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    this.SelectStudentIDArray.push({'Id': doc.id, 'Name': doc.id+" "+doc.data().Name});
-                });
-            });
+        DocIDSizeUser(){
+          getDocs(collection(firestoredb,"Students")).then(snap => {
+            this.sizeUser = snap.size // will return the collection size
+            // console.log(this.sizeUser);
+            // this.size+1;
+          });
         },
-        getMode(selectedStudentIDValue){
-            const q = query(collection(firestoredb, "Students", selectedStudentIDValue, "History"));
-            onSnapshot(q, (querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    this.SelectModeArray.push({'Id': doc.id, 'Name': "ครั้งที่ "+doc.id});
-                });
-            });
+        DocIDSizeDevice(){
+          getDocs(collection(firestoredb,"Device")).then(snap => {
+            this.sizeDevice = snap.size // will return the collection size
+            // console.log(this.sizeDevice);
+            // this.size+1;
+          });
         },
-        PutData(){
-            data = this.ChartData;
-          },
-          sliceCheckBack(){
-            if(this.ChartData[this.ChartData.length-1].y==0&&this.ChartData[this.ChartData.length-2].y==0){
-                this.ChartData=this.ChartData.slice(0,-1)
-                // console.log(this.ChartData);
-                this.PutData();
-                this.sliceCheckBack();
-            }
-            else{
-              this.PutData();
-            }
-
-          },
-          sliceCheckFront(){
-            if(this.ChartData[0].y==0&&this.ChartData[1].y==0){
-                this.ChartData=this.ChartData.slice(1)
-                // console.log(this.ChartData.length);
-                this.PutData();
-                this.sliceCheckFront();
-            }
-            else{
-              this.PutData();
-            }
-          },
-        getChart(selectedStudentIDValue, selectedModeValue){
-          // this.DocIDSize()
-              onSnapshot(doc(firestoredb, "Students", selectedStudentIDValue, "History", selectedModeValue), (doc) => {
-                // console.log(selectedStudentIDValue);
-                // console.log(selectedModeValue);
-                this.TimeDone = new Date(doc.data().DateDone.seconds*1000).toLocaleTimeString();
-                this.DateDone = new Date(doc.data().DateDone.seconds*1000).toLocaleDateString('th-TH', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  // weekday: 'long',
-                });
-                this.Device = doc.data().Device;
-                this.StudentID = doc.data().StudentID;
-                this.DateDropdown =new Date(doc.data().DateDone.seconds*1000).toLocaleDateString();
-                this.ChartData = doc.data().ChartData;
-                this.Mode = doc.data().Mode;
-                this.ModeSec = doc.data().ModeSec;
-                // this.StudentID = doc.data().StudentID;
-                this.Name = doc.data().Name;
-                  // console.log(doc.id);
-                  if(this.Mode=="คาบเบา"){
-                    this.Modetext= "แรง 15 - 20 กิโลกรัม";
-                  }
-                  else if(this.Mode=="คาบกลาง"){
-                    this.Modetext= "แรง 20 - 25 กิโลกรัม";
-                  }
-                  else if(this.Mode=="คาบหนัก"){
-                    this.Modetext= "แรง 25 - 40 กิโลกรัม";
-                  }
-                this.sliceCheckBack();
-                this.sliceCheckFront();
-                // console.log(this.ChartData);
-                for (let i = 0; i < this.ChartData.length; i++) {
-                  this.ChartData[i].x = i ;
-                  // console.log(this.ChartData[i].x);
-                }
-                // console.log(this.ChartData);
-
+        DocIDSize(){
+          getDocs(collection(firestoredb,"Students")).then(snap => {
+            // this.size = snap.size // will return the collection size
+            const C = snap.docs;
+            // console.log(C[1].id);
+            for (let i=0; i<C.length;i++ ){
+              console.log(C[i].id);
+              getDocs(collection(firestoredb,"Students",C[i].id,"TestHistory")).then(snap => {
+                this.sizeTest = this.sizeTest+snap.size // will return the collection size
+                this.sizeArray1[0]=this.sizeTest;
+                data2 = this.sizeArray1;
+                this.UpdateChart();
               });
-        }
+            }
+            for (let i=0; i<C.length;i++ ){
+              console.log(C[i].id);
+              getDocs(collection(firestoredb,"Students",C[i].id,"PracticeHistory")).then(snap => {
+                this.sizePractice = this.sizePractice+snap.size // will return the collection size
+                this.sizeArray2[0]=this.sizePractice;
+                data1 = this.sizeArray2;
+                this.UpdateChart();
+              });
+            }
+            
+            // this.PutData(this.size);
+            // getDocs(collection(firestoredb,"TestHistory")).then(snap => {
+            // this.size = snap.size // will return the collection size
+            // console.log(this.size);
+            // // this.size+1;
+            // });
+            // this.size+1;
+          });
+          // const q = query(collection(firestoredb,"Students"), where("Name", "!=", null));
+          // onSnapshot(q, (querySnapshot) => {
+          //   const cities = [];
+          //   querySnapshot.forEach((doc) => {
+          //       cities.push(doc.id);
+          //   });
+          //   console.log("Current cities in CA: ", cities.join(", "));
+          // });
+        },
+        PutData(size){
+          console.log(size);
+          console.log(this.size);
+          // this.size = this.size/this.sizeUser
+          this.sizeArray[0]=this.size;
+          data2 = this.sizeArray;
+        },
+        UpdateChart(){
+          this.$refs.chart.updateSeries([
+            {
+              data: data1,
+            },
+            {
+              data: data2,
+            }
+          ]);
+        },
+        UpdateChartAverage(){
+        // console.log(this.series3 = [this.sizePractice,this.sizeTest])
+        // console.log(this.sizePractice);
+        this.series.slice()
+        this.sizeArray2[0]= this.sizePractice/this.sizeUser;
+        this.sizeArray1[0]= this.sizeTest/this.sizeUser;
+         data2 = this.sizeArray1;
+         data1 = this.sizeArray2;
+          this.$refs.chart.updateSeries([
+            {
+              data: data1,
+            },
+            {
+              data: data2,
+            }
+          ]);
+          
+        },
     },
 
     mounted(){
+        if (localStorage.getItem('reloaded')) {
+            // The page was just reloaded. Clear the value from local storage
+            // so that it will reload the next time this page is visited.
+            localStorage.removeItem('reloaded');
+        } else {
+            // Set a flag so that we know not to reload the page twice.
+            localStorage.setItem('reloaded', '1');
+            location.reload();
+        }
+      // console.log("Update "+this.series[1].data);
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
         if(user){
-          const uid = user.uid;
-          console.log(uid)
+          // const uid = user.uid;
+          // console.log(uid)
           this.displayNameUser = user.displayName;
           this.emailUser = user.email;
           this.photoURLUser = user.photoURL;
+          this.DocIDSizeUser();
+          this.DocIDSizeDevice();
+          // this.DocIDSize();
           // this.StudentID = (user.email).split("@")[0];
         }
         });
-        this.getStudentID();
+        this.DocIDSize();
+        // this.PutData(this.size);
+        console.log(this.sizePractice);
+        console.log(this.sizeTest);
+        // this.UpdateChart();
         // this.SelectModeArray.push({'Id': null, 'Name': "ประวัติการฝึก"});
         // console.log(this.selectedStudentIDValue);
         // this.getMode(this.selectedStudentIDValue);
     },
     beforeUpdated(){
+      this.series3.push(this.sizePractice)
+      this.series3.push(this.sizeTest) 
         // this.getStudentID();
         // console.log(this.selectedStudentIDValue);
         // this.getMode(this.selectedStudentIDValue)
 
     },
     updated(){
-        console.log(this.selectedStudentIDValue);
-        this.getChart(this.selectedStudentIDValue, this.selectedModeValue);
-          // console.log(this.selectedValue);
-        this.$refs.chart.updateSeries([{
-          data: data,
-        }]);
-
+        this.UpdateChartAverage();
+        // if (this.series3.length == 1) {
+        //   console.log("ok")
+        //   this.series3=[this.sizePractice, this.sizeTest]
+        //   console.log(this.sizePractice, this.sizeTest)
+        // }
     },
-    watch: {
-            selectedStudentIDValue: {
-                handler(value) {
-                    this.SelectModeArray=[];
-                    const q = query(collection(firestoredb, "Students", value, "History"));
-                    onSnapshot(q, (querySnapshot) => {
-                        querySnapshot.forEach((doc) => {
-                            this.SelectModeArray.push({'Id': doc.id, 'Name': "ครั้งที่ "+doc.id});
-                        });
-                    });
-                },
-                immediate: true // This ensures the watcher is triggered upon creation
-            },
-    },
+    //  watch: {
+    //         series3: {
+    //             handler(value) {
+    //                 if (value.length == 1) {
+    //                   console.log("ok")
+    //                   this.series3=[this.sizePractice, this.sizeTest]
+    //                   console.log(this.sizePractice, this.sizeTest)
+    //                 }
+    //             },
+    //             immediate: true // This ensures the watcher is triggered upon creation
+    //         },
+    // },
 }
 </script>
 

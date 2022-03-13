@@ -383,10 +383,10 @@ export default {
       },
       fillData () {
         if(this.Device=="https://magellan.ais.co.th/pullmessageapis/api/listen/thing/57F86C983041DCBEFD8838A2E1F5A106"){
-            this.Device = "Device No.01";
+            this.Device = "M-FiP No.01";
           }
         else if(this.Device=="https://magellan.ais.co.th/pullmessageapis/api/listen/thing/B2FA25E81912FE3465EB0CFE69CE826E"){
-          this.Device = "Device No.02";
+          this.Device = "M-FiP No.02";
         }
        try {
           const docRef = setDoc(doc(firestoredb, "Students", this.StudentID.toString(),"PracticeHistory", ((this.size)+1).toString()), {
